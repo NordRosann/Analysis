@@ -59,6 +59,37 @@ extension DataPoint {
     
 }
 
+extension DataPoint {
+    
+    func isSameType(as dataPoint: DataPoint) -> Bool {
+        switch self {
+        case .nullValue:
+            return dataPoint == .nullValue
+        case .boolValue:
+            switch dataPoint {
+            case .boolValue: return true
+            default: return false
+            }
+        case .numericValue:
+            switch dataPoint {
+            case .numericValue: return true
+            default: return false
+            }
+        case .integerValue:
+            switch dataPoint {
+            case .integerValue: return true
+            default: return false
+        }
+        case .stringValue:
+            switch dataPoint {
+            case .stringValue: return true
+            default: return false
+            }
+        }
+    }
+    
+}
+
 extension DataPoint: Equatable { }
 
 public func == (lhs: DataPoint, rhs: DataPoint) -> Bool {

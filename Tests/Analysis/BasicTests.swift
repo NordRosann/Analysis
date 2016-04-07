@@ -33,4 +33,37 @@ class BasicTests: XCTestCase {
         XCTAssertEqual(point, DataPoint.stringValue("awesome"))
     }
     
+    func testTransform() {
+        let row = Row(elements: [2015, "UA", 4, "shit"])
+        let year = VariableDescription(name: "year", type: Int.self)
+        let code = VariableDescription(name: "code", type: String.self)
+        let value = VariableDescription(name: "value", type: Int.self)
+        let anotherValue = VariableDescription(name: "anVal", type: Int.self)
+        let schema = RowSchema(variables: year, code, value, anotherValue)
+        let newRow = row.transformed(for: schema)
+        XCTAssertEqual(newRow.elements, [2015, "UA", 4, .nullValue])
+    }
+    
+    func testTransformShorter() {
+        let row = Row(elements: [2015, "UA", 4])
+        let year = VariableDescription(name: "year", type: Int.self)
+        let code = VariableDescription(name: "code", type: String.self)
+        let value = VariableDescription(name: "value", type: Int.self)
+        let anotherValue = VariableDescription(name: "anVal", type: Int.self)
+        let schema = RowSchema(variables: year, code, value, anotherValue)
+        let newRow = row.transformed(for: schema)
+        XCTAssertEqual(newRow.elements, [2015, "UA", 4, .nullValue])
+    }
+    
+    func testTransformLonger() {
+        let row = Row(elements: [2015, "UA", 4, "EU", false])
+        let year = VariableDescription(name: "year", type: Int.self)
+        let code = VariableDescription(name: "code", type: String.self)
+        let value = VariableDescription(name: "value", type: Int.self)
+        let anotherValue = VariableDescription(name: "anVal", type: String.self)
+        let schema = RowSchema(variables: year, code, value, anotherValue)
+        let newRow = row.transformed(for: schema)
+        XCTAssertEqual(newRow.elements, [2015, "UA", 4, "EU"])
+    }
+    
 }
