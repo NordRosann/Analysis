@@ -17,6 +17,7 @@ public enum DataPoint {
     
     public enum Error: ErrorProtocol {
         case incompatibleType
+        case cantInitFromGivenValue
     }
 }
 
