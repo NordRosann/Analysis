@@ -76,6 +76,17 @@ class DataFrameTests: XCTestCase {
         let codes: List = ["UA", "RU", "BL"]
         let values: List = [4, 12, 5]
         let countriesFrame = DataFrame(schema: schema, columns: [years, codes, values])
+        print(countriesFrame)
+        
+        enum Country: String, DataPointConvertible {
+            case ukraine = "UA"
+            case russia = "RU"
+            case belarus = "BL"
+        }
+        let countryCode = VariableDescription(name: "country", type: Country.self)
+        var secondFrame = countriesFrame
+        secondFrame.schema.variables = secondFrame.schema.variables.map({ $0.name == "code" ? countryCode : $0 })
+        print(secondFrame)
     }
     
 }
