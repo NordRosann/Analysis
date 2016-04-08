@@ -12,13 +12,13 @@ public struct DataFrame {
 
     public var schema: RowSchema {
         didSet {
-            rows = rows.map({ $0.adjusted(to: schema) })
+            rows = rows.lazy.map({ $0.adjusted(to: schema) })
         }
     }
     
     public var rows: [List] {
         didSet {
-            rows = rows.map({ $0.adjusted(to: schema) })
+            rows = rows.lazy.map({ $0.adjusted(to: schema) })
         }
     }
 
