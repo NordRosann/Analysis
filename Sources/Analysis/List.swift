@@ -21,11 +21,11 @@ extension List {
 
 extension List {
     
-    mutating func transform(for schema: RowSchema) {
-        self = transformed(for: schema)
+    mutating func adjust(to schema: RowSchema) {
+        self = adjusted(to: schema)
     }
     
-    func transformed(for schema: RowSchema) -> List {
+    func adjusted(to schema: RowSchema) -> List {
         let sizeDiff = schema.length - elements.count
         let curElements = sizeDiff > 0 ? elements + [DataPoint](repeating: .nullValue, count: sizeDiff) : elements
         let zipped = zip(curElements, schema.variables)
