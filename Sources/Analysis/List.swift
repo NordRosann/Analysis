@@ -88,7 +88,7 @@ extension Sequence where Iterator.Element == List {
 
 extension Sequence where Iterator.Element: Hashable {
     public func distinct() -> Set<Iterator.Element> {
-        
+        return Set(self)
     }
 }
 
