@@ -4,17 +4,22 @@ public struct List {
         self.elements = elements
     }
     
-    var elements: [DataPoint]
+    private(set) var elements: [DataPoint]
     
 }
 
 extension List {
     
     public subscript(index: Int) -> DataPoint {
-        if index < elements.count {
-            return elements[index]
+        get {
+            if index < elements.count {
+                return elements[index]
+            }
+            return .nullValue
         }
-        return .nullValue
+        set {
+            elements[index] = newValue
+        }
     }
     
 }
@@ -56,6 +61,57 @@ extension List {
     
     func unified<T: DataPointInitializable>() -> [T] {
         return elements.flatMap({ try? T(dataPoint: $0) })
+    }
+    
+}
+
+extension List: RangeReplaceableCollection {
+    
+    public typealias Index = Int
+    
+    public init() {
+        self.init(elements: [])
+    }
+    
+    public var startIndex: Int {
+        return elements.startIndex
+    }
+    
+    public var endIndex: Int {
+        return elements.endIndex
+    }
+    
+    public subscript(bounds: Range<Int>) -> ArraySlice<DataPoint> {
+        get {
+            return elements[bounds]
+        }
+        set {
+            elements[bounds] = newValue
+        }
+    }
+    
+    public func makeIterator() -> IndexingIterator<[DataPoint]> {
+        return elements.makeIterator()
+    }
+    
+    public mutating func replaceSubrange<C: Collection where C.Iterator.Element == DataPoint>(subRange: Range<Int>, with newElements: C) {
+        elements.replaceSubrange(subRange, with: newElements)
+    }
+    
+}
+
+extension List: MutableCollection { }
+
+extension List {
+    
+    public func map(@noescape transform: @noescape (DataPoint) throws -> DataPoint) rethrows -> List {
+        let transformed: [DataPoint] = try self.map(transform)
+        return List(elements: transformed)
+    }
+    
+    public func map<U: DataPointConvertible, T>(@noescape transform: @noescape (U) throws -> T) rethrows -> [T] {
+        print("Me got called!")
+        return try (unified() as [U]).map(transform)
     }
     
 }
