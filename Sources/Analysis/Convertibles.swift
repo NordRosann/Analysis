@@ -57,9 +57,7 @@ extension String: DataPointConvertible {
 extension DataPointConvertible where Self: RawRepresentable, Self.RawValue: DataPointConvertible {
     public init(dataPoint: DataPoint) throws {
         let rawValue: Self.RawValue = try Self.RawValue(dataPoint: dataPoint)
-        print(rawValue)
         if let ready = Self.init(rawValue: rawValue) {
-            print(ready)
             self = ready
         } else {
             throw DataPoint.Error.cantInitFromGivenValue

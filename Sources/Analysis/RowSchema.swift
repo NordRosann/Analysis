@@ -1,17 +1,25 @@
 public struct RowSchema {
-    public let variables: [VariableDescription]
+    
+    public var variables: [VariableDescription]
+    
     public init(variables: VariableDescription...) {
         self.variables = variables
     }
+    
     public init(variables: [VariableDescription]) {
         self.variables = variables
     }
+    
 }
 
 extension RowSchema {
+    
     public var length: Int {
         return variables.count
     }
+    
+    
+    
 }
 
 extension RowSchema: Equatable { }

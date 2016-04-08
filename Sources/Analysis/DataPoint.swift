@@ -122,6 +122,12 @@ public func == (lhs: DataPoint, rhs: DataPoint) -> Bool {
     }
 }
 
+extension DataPoint: NilLiteralConvertible {
+    public init(nilLiteral: ()) {
+        self = .nullValue
+    }
+}
+
 extension DataPoint: BooleanLiteralConvertible {
     public init(booleanLiteral value: BooleanLiteralType) {
         self = .boolValue(value)
@@ -156,7 +162,7 @@ extension DataPoint: CustomStringConvertible {
     public var description: String {
         switch self {
         case .nullValue:
-            return "NA"
+            return "nil"
         case .boolValue(let bool):
             return bool.description
         case .numericValue(let double):
