@@ -56,14 +56,13 @@ class BasicTests: XCTestCase {
     }
     
     func testTransformLonger() {
-        let row = List(elements: [2015, "UA", 4, "EU", false])
+        let row = List(elements: [2015, "UA", 4, "EU"])
         let year = VariableDescription(name: "year", type: Int.self)
         let code = VariableDescription(name: "code", type: String.self)
         let value = VariableDescription(name: "value", type: Int.self)
-        let anotherValue = VariableDescription(name: "anVal", type: String.self)
-        let schema = RowSchema(variables: year, code, value, anotherValue)
+        let schema = RowSchema(variables: year, code, value)
         let newRow = row.transformed(for: schema)
-        XCTAssertEqual(newRow.elements, [2015, "UA", 4, "EU"])
+        XCTAssertEqual(newRow.elements, [2015, "UA", 4])
     }
     
     func testDataFrameSchemeMutation() {

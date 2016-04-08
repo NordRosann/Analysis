@@ -1,5 +1,11 @@
 public struct List {
+    
+    public init(elements: [DataPoint]) {
+        self.elements = elements
+    }
+    
     var elements: [DataPoint]
+    
 }
 
 extension List {
