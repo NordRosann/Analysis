@@ -27,6 +27,20 @@ class DataFrameTests: XCTestCase {
         // print(countriesFrame.rows)
     }
     
+    func testDataFrameSubscripts() {
+        let year = VariableDescription(name: "year", type: Int.self)
+        let code = VariableDescription(name: "code", type: String.self)
+        let value = VariableDescription(name: "value", type: Int.self)
+        let schema = RowSchema(variables: year, code, value)
+        let rows: [List] = [[2015, "UA", 4], [2016, "RU", 12], [2017, "BL", 5]]
+        let frame = schema.makeDataFrame(rows: rows)
+        XCTAssertEqual(frame[year]!, [2015, 2016, 2017] as List)
+        XCTAssertEqual(frame[code], ["UA", "RU", "BL"] as List)
+        var newFrame = frame
+        newFrame[year] = [2013, 2011, 2009]
+        XCTAssertEqual(newFrame[row: 0, column: 0], 2013)
+    }
+    
     func testDataFrameWithDifferentColumnsLength() {
         let year = VariableDescription(name: "year", type: Int.self)
         let code = VariableDescription(name: "code", type: String.self)

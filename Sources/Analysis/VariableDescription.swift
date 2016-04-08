@@ -10,7 +10,13 @@ public struct VariableDescription {
     
 }
 
-extension VariableDescription: Equatable { }
+extension VariableDescription: Hashable {
+    
+    public var hashValue: Int {
+        return name.hashValue
+    }
+    
+}
 
 public func == (lhs: VariableDescription, rhs: VariableDescription) -> Bool {
     return lhs.name == rhs.name && lhs.type == rhs.type

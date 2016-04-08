@@ -4,6 +4,10 @@ public struct List {
         self.elements = elements
     }
     
+    public init<T: DataPointRepresentable>(representables: [T]) {
+        self.elements = representables.map({ $0.dataPoint })
+    }
+    
     private(set) var elements: [DataPoint]
     
 }
@@ -26,24 +30,6 @@ extension List {
 
 extension List {
     
-    mutating func adjust(to schema: RowSchema) {
-        self = adjusted(to: schema)
-    }
-    
-    func adjusted(to schema: RowSchema) -> List {
-        let sizeDiff = schema.length - elements.count
-        let curElements = sizeDiff > 0 ? elements + [DataPoint](repeating: .nullValue, count: sizeDiff) : elements
-        let zipped = zip(curElements, schema.variables)
-        let newElements: [DataPoint] = zipped.map { element, description in
-            if let newElement = try? description.type.init(dataPoint: element) {
-                return newElement.dataPoint
-            } else {
-                return .nullValue
-            }
-        }
-        return List(elements: newElements)
-    }
-    
     mutating func unify(for type: DataPointConvertible.Type) {
         self = unified(for: type)
     }
@@ -61,6 +47,25 @@ extension List {
     
     func unified<T: DataPointInitializable>() -> [T] {
         return elements.flatMap({ try? T(dataPoint: $0) })
+    }
+    
+    func keyed(with schema: RowSchema) -> [String: DataPoint] {
+        let zipped = zip(self, schema.variables.map({ $0.name }))
+        return zipped.reduce([:]) {
+            var dict = $0
+            dict[$1.1] = $1.0
+            return dict
+        }
+    }
+    
+    // TODO: Find a better name
+    func coupled(with schema: RowSchema) -> [VariableDescription: DataPoint] {
+        let zipped = zip(self, schema.variables)
+        return zipped.reduce([:]) {
+            var dict = $0
+            dict[$1.1] = $1.0
+            return dict
+        }
     }
     
 }
@@ -102,16 +107,54 @@ extension List: RangeReplaceableCollection {
 
 extension List: MutableCollection { }
 
+// MARK: - Custom high-order functions
+
 extension List {
+    
+    // MARK: Map
     
     public func map(@noescape transform: @noescape (DataPoint) throws -> DataPoint) rethrows -> List {
         let transformed: [DataPoint] = try self.map(transform)
         return List(elements: transformed)
     }
     
-    public func map<U: DataPointConvertible, T>(@noescape transform: @noescape (U) throws -> T) rethrows -> [T] {
+    public func map<U: DataPointInitializable, T>(@noescape transform: @noescape (U) throws -> T) rethrows -> [T] {
         print("Me got called!")
         return try (unified() as [U]).map(transform)
+    }
+    
+    // TODO: Redesign
+    public func map<U: DataPointInitializable, T: DataPointRepresentable>(@noescape transform: @noescape (U) throws -> T) rethrows -> List {
+        let mapped: [DataPoint] = try self.map {
+            do {
+                let transformingValue = try U(dataPoint: $0)
+                do {
+                    return try transform(transformingValue).dataPoint
+                } catch let error {
+                    throw error
+                }
+            } catch let error where error is DataPoint.Error {
+                return $0
+            }
+        }
+        return List(elements: mapped)
+    }
+    
+    // MARK: Filter
+    
+    public func filter(@noescape includeElement: @noescape (DataPoint) throws -> Bool) rethrows -> List {
+        let filtered: [DataPoint] = try self.filter(includeElement)
+        return List(elements: filtered)
+    }
+    
+    public func filter<T: DataPointInitializable>(@noescape includeElement: @noescape (T) throws -> Bool) rethrows -> [T] {
+        let unifiedArray: [T] = unified()
+        return try unifiedArray.filter(includeElement)
+    }
+    
+    public func filter<T: DataPointConvertible>(@noescape includeElement: @noescape (T) throws -> Bool) rethrows -> List {
+        let filtered: [T] = try filter(includeElement)
+        return List(representables: filtered)
     }
     
 }
@@ -131,7 +174,7 @@ public func == (lhs: List, rhs: List) -> Bool {
 }
 
 extension Sequence where Iterator.Element == List {
-    internal func difuse() -> [List] {
+    internal func transposed() -> [List] {
         guard let rowsCount = map({ $0.elements.count }).max() else {
             return []
         }
