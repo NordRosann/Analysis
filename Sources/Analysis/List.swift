@@ -73,3 +73,15 @@ extension List: Equatable { }
 public func == (lhs: List, rhs: List) -> Bool {
     return lhs.elements == rhs.elements
 }
+
+extension Sequence where Iterator.Element == List {
+    internal func difuse() -> [List] {
+        guard let rowsCount = map({ $0.elements.count }).max() else {
+            return []
+        }
+        return (0 ..< rowsCount).map { index in
+            let mapped = map({ $0[index] })
+            return List(elements: mapped)
+        }
+    }
+}
