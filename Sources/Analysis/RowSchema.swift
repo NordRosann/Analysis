@@ -1,12 +1,12 @@
 public struct RowSchema {
     
-    public var variables: [VariableDescription]
+    public var variables: [Variable]
     
-    public init(variables: VariableDescription...) {
+    public init(variables: Variable...) {
         self.variables = variables
     }
     
-    public init(variables: [VariableDescription]) {
+    public init(variables: [Variable]) {
         self.variables = variables
     }
     

@@ -1,4 +1,4 @@
-public struct VariableDescription {
+public struct Variable {
     
     public init(name: String, type: DataPointConvertible.Type) {
         self.name = name
@@ -10,7 +10,7 @@ public struct VariableDescription {
     
 }
 
-extension VariableDescription: Hashable {
+extension Variable: Hashable {
     
     public var hashValue: Int {
         return name.hashValue
@@ -18,6 +18,6 @@ extension VariableDescription: Hashable {
     
 }
 
-public func == (lhs: VariableDescription, rhs: VariableDescription) -> Bool {
+public func == (lhs: Variable, rhs: Variable) -> Bool {
     return lhs.name == rhs.name && lhs.type == rhs.type
 }

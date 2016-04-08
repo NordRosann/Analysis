@@ -31,7 +31,7 @@ public struct DataFrame {
         }
     }
     
-    public var variables: [VariableDescription] {
+    public var variables: [Variable] {
         get {
             return schema.variables
         }
@@ -87,7 +87,7 @@ extension DataFrame {
         // TODO: Set for subscript
     }
     
-    public subscript(variable: VariableDescription) -> List? {
+    public subscript(variable: Variable) -> List? {
         get {
             for (list, description) in zip(columns, variables) {
                 if description == variable {
@@ -122,7 +122,7 @@ extension DataFrame {
         }
     }
     
-    public var coupledRows: [[VariableDescription: DataPoint]] {
+    public var coupledRows: [[Variable: DataPoint]] {
         get {
             return rows.map({ $0.coupled(with: schema) })
         }

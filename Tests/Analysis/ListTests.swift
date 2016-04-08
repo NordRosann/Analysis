@@ -61,9 +61,9 @@ class ListTests: XCTestCase {
     }
     
     func testKeying() {
-        let year = VariableDescription(name: "year", type: Int.self)
-        let code = VariableDescription(name: "code", type: String.self)
-        let value = VariableDescription(name: "value", type: Int.self)
+        let year = Variable(name: "year", type: Int.self)
+        let code = Variable(name: "code", type: String.self)
+        let value = Variable(name: "value", type: Int.self)
         let schema = RowSchema(variables: year, code, value)
         let list: List = [2015, "UA", 4]
         let keyed = list.keyed(with: schema)
@@ -72,13 +72,13 @@ class ListTests: XCTestCase {
     }
     
     func testCoupling() {
-        let year = VariableDescription(name: "year", type: Int.self)
-        let code = VariableDescription(name: "code", type: String.self)
-        let value = VariableDescription(name: "value", type: Int.self)
+        let year = Variable(name: "year", type: Int.self)
+        let code = Variable(name: "code", type: String.self)
+        let value = Variable(name: "value", type: Int.self)
         let schema = RowSchema(variables: year, code, value)
         let list: List = [2015, "UA", 4]
         let keyed = list.coupled(with: schema)
-        let expected: [VariableDescription: DataPoint] = [year: 2015, code: "UA", value: 4]
+        let expected: [Variable: DataPoint] = [year: 2015, code: "UA", value: 4]
         XCTAssertEqual(keyed, expected)
     }
     

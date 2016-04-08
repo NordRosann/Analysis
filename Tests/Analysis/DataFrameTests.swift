@@ -5,19 +5,19 @@ class DataFrameTests: XCTestCase {
     
     func testDataFrameSchemeMutation() {
         let row: List = [2015, "UA", 4]
-        let year = VariableDescription(name: "year", type: Int.self)
-        let code = VariableDescription(name: "code", type: String.self)
-        let value = VariableDescription(name: "value", type: Int.self)
+        let year = Variable(name: "year", type: Int.self)
+        let code = Variable(name: "code", type: String.self)
+        let value = Variable(name: "value", type: Int.self)
         let schema = RowSchema(variables: year, code, value)
         var frame = DataFrame(schema: schema, rows: [row])
-        frame.schema.variables[2] = VariableDescription(name: "value", type: String.self)
+        frame.schema.variables[2] = Variable(name: "value", type: String.self)
         XCTAssertEqual(frame.rows.first!, List(elements: [2015, "UA", .nullValue]))
     }
     
     func testDataFrameColumns() {
-        let year = VariableDescription(name: "year", type: Int.self)
-        let code = VariableDescription(name: "code", type: String.self)
-        let value = VariableDescription(name: "value", type: Int.self)
+        let year = Variable(name: "year", type: Int.self)
+        let code = Variable(name: "code", type: String.self)
+        let value = Variable(name: "value", type: Int.self)
         let schema = RowSchema(variables: year, code, value)
         let years: List = [2015, 2016, 2017]
         let codes: List = ["UA", "RU", "BL"]
@@ -28,9 +28,9 @@ class DataFrameTests: XCTestCase {
     }
     
     func testDataFrameSubscripts() {
-        let year = VariableDescription(name: "year", type: Int.self)
-        let code = VariableDescription(name: "code", type: String.self)
-        let value = VariableDescription(name: "value", type: Int.self)
+        let year = Variable(name: "year", type: Int.self)
+        let code = Variable(name: "code", type: String.self)
+        let value = Variable(name: "value", type: Int.self)
         let schema = RowSchema(variables: year, code, value)
         let rows: [List] = [[2015, "UA", 4], [2016, "RU", 12], [2017, "BL", 5]]
         let frame = schema.makeDataFrame(rows: rows)
@@ -42,9 +42,9 @@ class DataFrameTests: XCTestCase {
     }
     
     func testDataFrameWithDifferentColumnsLength() {
-        let year = VariableDescription(name: "year", type: Int.self)
-        let code = VariableDescription(name: "code", type: String.self)
-        let value = VariableDescription(name: "value", type: Int.self)
+        let year = Variable(name: "year", type: Int.self)
+        let code = Variable(name: "code", type: String.self)
+        let value = Variable(name: "value", type: Int.self)
         let schema = RowSchema(variables: year, code, value)
         let years: List = [2015, 2016]
         let codes: List = ["UA", "RU", "BL", "GR"]
@@ -55,9 +55,9 @@ class DataFrameTests: XCTestCase {
     }
     
     func testDataFrameWithShorterScheme() {
-        let year = VariableDescription(name: "year", type: Int.self)
-        let code = VariableDescription(name: "code", type: String.self)
-        let value = VariableDescription(name: "value", type: Int.self)
+        let year = Variable(name: "year", type: Int.self)
+        let code = Variable(name: "code", type: String.self)
+        let value = Variable(name: "value", type: Int.self)
         let schema = RowSchema(variables: year, code, value)
         let years: List = [2015, 2016, 2017]
         let codes: List = ["UA", "RU", "BL"]
@@ -69,10 +69,10 @@ class DataFrameTests: XCTestCase {
     }
     
     func testDataFrameWithLongerScheme() {
-        let year = VariableDescription(name: "year", type: Int.self)
-        let code = VariableDescription(name: "code", type: String.self)
-        let value = VariableDescription(name: "value", type: Int.self)
-        let machine = VariableDescription(name: "machine", type: String.self)
+        let year = Variable(name: "year", type: Int.self)
+        let code = Variable(name: "code", type: String.self)
+        let value = Variable(name: "value", type: Int.self)
+        let machine = Variable(name: "machine", type: String.self)
         let schema = RowSchema(variables: year, code, value, machine)
         let years: List = [2015, 2016, 2017]
         let codes: List = ["UA", "RU", "BL"]
@@ -82,9 +82,9 @@ class DataFrameTests: XCTestCase {
     }
     
     func testDataFrameTransformToEnum() {
-        let year = VariableDescription(name: "year", type: Int.self)
-        let code = VariableDescription(name: "code", type: String.self)
-        let value = VariableDescription(name: "value", type: Int.self)
+        let year = Variable(name: "year", type: Int.self)
+        let code = Variable(name: "code", type: String.self)
+        let value = Variable(name: "value", type: Int.self)
         let schema = RowSchema(variables: year, code, value)
         let years: List = [2015, 2016, 2017]
         let codes: List = ["UA", "RU", "BL"]
@@ -97,7 +97,7 @@ class DataFrameTests: XCTestCase {
             case russia = "RU"
             case belarus = "BL"
         }
-        let countryCode = VariableDescription(name: "country", type: Country.self)
+        let countryCode = Variable(name: "country", type: Country.self)
         var secondFrame = countriesFrame
         secondFrame.schema.variables = secondFrame.schema.variables.map({ $0.name == "code" ? countryCode : $0 })
         let countries: [Country] = secondFrame.columns[1].unified()

@@ -59,7 +59,7 @@ extension List {
     }
     
     // TODO: Find a better name
-    func coupled(with schema: RowSchema) -> [VariableDescription: DataPoint] {
+    func coupled(with schema: RowSchema) -> [Variable: DataPoint] {
         let zipped = zip(self, schema.variables)
         return zipped.reduce([:]) {
             var dict = $0
