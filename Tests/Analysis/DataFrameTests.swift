@@ -86,6 +86,9 @@ class DataFrameTests: XCTestCase {
         let countryCode = VariableDescription(name: "country", type: Country.self)
         var secondFrame = countriesFrame
         secondFrame.schema.variables = secondFrame.schema.variables.map({ $0.name == "code" ? countryCode : $0 })
+        let countries: [Country] = secondFrame.columns[1].unified()
+        print(countries)
+        XCTAssertEqual(countries, [Country.ukraine, Country.russia, Country.belarus])
         print(secondFrame)
     }
     
