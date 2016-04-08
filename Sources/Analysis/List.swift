@@ -126,16 +126,10 @@ extension List {
     // TODO: Redesign
     public func map<U: DataPointInitializable, T: DataPointRepresentable>(@noescape transform: @noescape (U) throws -> T) rethrows -> List {
         let mapped: [DataPoint] = try self.map {
-            do {
-                let transformingValue = try U(dataPoint: $0)
-                do {
-                    return try transform(transformingValue).dataPoint
-                } catch let error {
-                    throw error
-                }
-            } catch let error where error is DataPoint.Error {
-                return $0
+            if let transformingValue = try? U(dataPoint: $0) {
+                return try transform(transformingValue).dataPoint
             }
+            return $0
         }
         return List(elements: mapped)
     }
@@ -153,8 +147,13 @@ extension List {
     }
     
     public func filter<T: DataPointConvertible>(@noescape includeElement: @noescape (T) throws -> Bool) rethrows -> List {
-        let filtered: [T] = try filter(includeElement)
-        return List(representables: filtered)
+        let filtered: [DataPoint] = try self.filter {
+            if let filteringValue = try? T(dataPoint: $0) {
+                return try includeElement(filteringValue)
+            }
+            return true
+        }
+        return List(elements: filtered)
     }
     
 }
