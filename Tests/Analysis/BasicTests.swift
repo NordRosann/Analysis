@@ -40,7 +40,7 @@ class BasicTests: XCTestCase {
         let value = VariableDescription(name: "value", type: Int.self)
         let anotherValue = VariableDescription(name: "anVal", type: Int.self)
         let schema = RowSchema(variables: year, code, value, anotherValue)
-        let newRow = row.transformed(for: schema)
+        let newRow = row.adjusted(to: schema)
         XCTAssertEqual(newRow.elements, [2015, "UA", 4, .nullValue])
     }
     
@@ -51,7 +51,7 @@ class BasicTests: XCTestCase {
         let value = VariableDescription(name: "value", type: Int.self)
         let anotherValue = VariableDescription(name: "anVal", type: Int.self)
         let schema = RowSchema(variables: year, code, value, anotherValue)
-        let newRow = row.transformed(for: schema)
+        let newRow = row.adjusted(to: schema)
         XCTAssertEqual(newRow.elements, [2015, "UA", 4, .nullValue])
     }
     
@@ -61,7 +61,7 @@ class BasicTests: XCTestCase {
         let code = VariableDescription(name: "code", type: String.self)
         let value = VariableDescription(name: "value", type: Int.self)
         let schema = RowSchema(variables: year, code, value)
-        let newRow = row.transformed(for: schema)
+        let newRow = row.adjusted(to: schema)
         XCTAssertEqual(newRow.elements, [2015, "UA", 4])
     }
     
