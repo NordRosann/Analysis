@@ -133,6 +133,8 @@ extension DataFrame {
     
 }
 
+extension DataFrame: Modifiable { }
+
 extension DataFrame: Equatable { }
 
 public func == (lhs: DataFrame, rhs: DataFrame) -> Bool {
