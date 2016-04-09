@@ -51,15 +51,6 @@ class ListTests: XCTestCase {
         XCTAssertEqual(changed, [3, 5])
     }
     
-    func testTranspose() {
-        let ukraine: List = ["UA", 2015, 4]
-        let russia: List = ["RU", 2014, 5]
-        let poland: List = ["PL", 2013, 6]
-        let lists = [ukraine, russia, poland]
-        let rotated = lists.transposed()
-        XCTAssertEqual(rotated[0], ["UA", "RU", "PL"] as List)
-    }
-    
     func testKeying() {
         let year = Variable(name: "year", type: Int.self)
         let code = Variable(name: "code", type: String.self)
@@ -80,6 +71,18 @@ class ListTests: XCTestCase {
         let keyed = list.coupled(with: schema)
         let expected: [Variable: DataPoint] = [year: 2015, code: "UA", value: 4]
         XCTAssertEqual(keyed, expected)
+    }
+    
+    func testSorting() {
+        let list: List = [2, 5, 0, 4, "key", 8, -1, "fake", false, nil, nil, 15]
+        let sorted: [Int] = list.sorted { ($0 as Int) < $1 }
+        let unifiedSorted: [Int] = list.unified().sorted { $0 < $1 }
+        let unifiedStrignsSorted: [String] = list.unified().sorted { $0.characters.count < $1.characters.count }
+        let expected = [-1, 0, 2, 4, 5, 8, 15]
+        let expectedStrings = ["key", "fake"]
+        XCTAssertEqual(sorted, expected)
+        XCTAssertEqual(unifiedSorted, expected)
+        XCTAssertEqual(unifiedStrignsSorted, expectedStrings)
     }
     
 }

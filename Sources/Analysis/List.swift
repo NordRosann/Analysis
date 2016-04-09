@@ -123,7 +123,6 @@ extension List {
         return try (unified() as [U]).map(transform)
     }
     
-    // TODO: Redesign
     public func map<U: DataPointInitializable, T: DataPointRepresentable>(@noescape transform: @noescape (U) throws -> T) rethrows -> List {
         let mapped: [DataPoint] = try self.map {
             if let transformingValue = try? U(dataPoint: $0) {
@@ -166,14 +165,19 @@ extension List: ArrayLiteralConvertible {
     
 }
 
-extension List: Equatable { }
+extension List: Hashable {
+    public var hashValue: Int {
+        return elements.reduce(0) { $0 + $1.hashValue }
+    }
+}
 
 public func == (lhs: List, rhs: List) -> Bool {
     return lhs.elements == rhs.elements
 }
 
 extension Sequence where Iterator.Element == List {
-    internal func transposed() -> [List] {
+    
+    public func transposed() -> [List] {
         guard let rowsCount = map({ $0.elements.count }).max() else {
             return []
         }
@@ -182,11 +186,32 @@ extension Sequence where Iterator.Element == List {
             return List(elements: mapped)
         }
     }
+    
+    public func aligned() -> [List] {
+        guard let longest = map({ $0.elements.count }).max() else {
+            return []
+        }
+        return self.map({ $0.count < longest ? $0.filled(upTo: longest) : $0 })
+    }
+    
+}
+
+private extension List {
+    
+    func filled(upTo size: Int) -> List {
+        let sizeDiff = size - self.count
+        if sizeDiff > 0 {
+            return self + List(elements: [DataPoint](repeating: .nullValue,
+                                                     count: sizeDiff))
+        }
+        return self
+    }
+    
 }
 
 extension Sequence where Iterator.Element: Hashable {
-    public func distinct() -> Set<Iterator.Element> {
-        return Set(self)
+    public func distinct() -> [Iterator.Element] {
+        return Array(Set(self))
     }
 }
 

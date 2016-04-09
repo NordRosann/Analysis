@@ -90,7 +90,22 @@ extension DataPoint {
     
 }
 
-extension DataPoint: Equatable { }
+extension DataPoint: Hashable {
+    public var hashValue: Int {
+        switch self {
+        case .nullValue:
+            return 0
+        case .boolValue(let bool):
+            return bool.hashValue
+        case .numericValue(let double):
+            return double.hashValue
+        case .integerValue(let integer):
+            return integer.hashValue
+        case .stringValue(let string):
+            return string.hashValue
+        }
+    }
+}
 
 public func == (lhs: DataPoint, rhs: DataPoint) -> Bool {
     switch lhs {

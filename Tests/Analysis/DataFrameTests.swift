@@ -106,4 +106,14 @@ class DataFrameTests: XCTestCase {
         print(secondFrame)
     }
     
+    func testDataFrameZZZ() {
+        let year = Variable(name: "year", type: Int.self)
+        let code = Variable(name: "code", type: String.self)
+        let value = Variable(name: "value", type: Int.self)
+        let schema = RowSchema(variables: year, code, value)
+        let rows: [List] = [[2015, "UA", 4], [2016, "RU", 12], [2017, "BL", 5]]
+        let frame = schema.makeDataFrame(rows: rows)
+        print(frame)
+    }
+    
 }
