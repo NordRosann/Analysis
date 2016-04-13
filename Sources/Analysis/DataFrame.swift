@@ -89,24 +89,29 @@ extension DataFrame {
     
     public subscript(variable: Variable) -> List? {
         get {
-            for (list, description) in zip(columns, variables) {
-                if description == variable {
-                    return list
-                }
-            }
-            return nil
+            return variables.index(of: variable).map({ columns[$0] })
         }
         set {
             guard let list = newValue else { return }
-            columns = zip(columns, variables).lazy.map { column, description in
-                if description == variable {
-                    return list
-                }
-                return column
+            if let index = variables.index(of: variable) {
+                columns[index] = list
+            } else {
+                schema.variables.append(variable)
+                columns.append(list)
             }
         }
     }
     
+    public subscript(variable: String) -> List? {
+        get {
+            return variables.index(where: { $0.name == variable }).map({ columns[$0] })
+        }
+    }
+    
+}
+
+extension Collection where Iterator.Element == List {
+    //
 }
 
 extension DataFrame {
@@ -132,8 +137,6 @@ extension DataFrame {
     }
     
 }
-
-extension DataFrame: Modifiable { }
 
 extension DataFrame: Equatable { }
 

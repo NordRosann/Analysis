@@ -47,7 +47,7 @@ class ListTests: XCTestCase {
     
     func testFilter() {
         let list: List = [2, 3, 5, false, nil, nil, "human", 4.0]
-        let changed: [Int] = list.filter({ $0 > 2 })
+        let changed: [Int] = list.filter { $0 > 2 }
         XCTAssertEqual(changed, [3, 5])
     }
     
@@ -73,14 +73,12 @@ class ListTests: XCTestCase {
         XCTAssertEqual(keyed, expected)
     }
     
-    func testSorting() {
+    func testUnifiedSorting() {
         let list: List = [2, 5, 0, 4, "key", 8, -1, "fake", false, nil, nil, 15]
-        let sorted: [Int] = list.sorted { ($0 as Int) < $1 }
         let unifiedSorted: [Int] = list.unified().sorted { $0 < $1 }
         let unifiedStrignsSorted: [String] = list.unified().sorted { $0.characters.count < $1.characters.count }
         let expected = [-1, 0, 2, 4, 5, 8, 15]
         let expectedStrings = ["key", "fake"]
-        XCTAssertEqual(sorted, expected)
         XCTAssertEqual(unifiedSorted, expected)
         XCTAssertEqual(unifiedStrignsSorted, expectedStrings)
     }

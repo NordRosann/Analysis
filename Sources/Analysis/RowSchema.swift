@@ -18,11 +18,11 @@ extension RowSchema {
         return variables.count
     }
     
-    public func makeDataFrame(rows rows: [List]) -> DataFrame {
+    public func makeDataFrame(rows: [List]) -> DataFrame {
         return DataFrame(schema: self, rows: rows)
     }
     
-    public func makeDataFrame(columns columns: [List]) -> DataFrame {
+    public func makeDataFrame(columns: [List]) -> DataFrame {
         return DataFrame(schema: self, columns: columns)
     }
     

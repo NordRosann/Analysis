@@ -30,11 +30,11 @@ extension List {
 
 extension List {
     
-    mutating func unify(for type: DataPointConvertible.Type) {
+    public mutating func unify(for type: DataPointConvertible.Type) {
         self = unified(for: type)
     }
     
-    func unified(for type: DataPointConvertible.Type) -> List {
+    public func unified(for type: DataPointConvertible.Type) -> List {
         let newElements: [DataPoint] = elements.map { element in
             if let newElement = try? type.init(dataPoint: element) {
                 return newElement.dataPoint
@@ -45,27 +45,20 @@ extension List {
         return List(elements: newElements)
     }
     
-    func unified<T: DataPointInitializable>() -> [T] {
+    public func unified<T: DataPointInitializable>() -> [T] {
         return elements.flatMap({ try? T(dataPoint: $0) })
     }
     
-    func keyed(with schema: RowSchema) -> [String: DataPoint] {
-        let zipped = zip(self, schema.variables.map({ $0.name }))
-        return zipped.reduce([:]) {
-            var dict = $0
-            dict[$1.1] = $1.0
-            return dict
-        }
+    public func keyed(with schema: RowSchema) -> [String: DataPoint] {
+        let zipped = zip(schema.variables.map({ $0.name }), self)
+        return zipped.toDict()
     }
     
     // TODO: Find a better name
     func coupled(with schema: RowSchema) -> [Variable: DataPoint] {
-        let zipped = zip(self, schema.variables)
-        return zipped.reduce([:]) {
-            var dict = $0
-            dict[$1.1] = $1.0
-            return dict
-        }
+        let zipped = zip(schema.variables, self)
+        return zipped.toDict()
+        
     }
     
 }
@@ -99,7 +92,7 @@ extension List: RangeReplaceableCollection {
         return elements.makeIterator()
     }
     
-    public mutating func replaceSubrange<C: Collection where C.Iterator.Element == DataPoint>(subRange: Range<Int>, with newElements: C) {
+    public mutating func replaceSubrange<C: Collection where C.Iterator.Element == DataPoint>(_ subRange: Range<Int>, with newElements: C) {
         elements.replaceSubrange(subRange, with: newElements)
     }
     
@@ -213,5 +206,19 @@ extension Sequence where Iterator.Element: Hashable {
     public func distinct() -> [Iterator.Element] {
         return Array(Set(self))
     }
+}
+
+private extension Zip2Sequence where Sequence1.Iterator.Element: Hashable {
+    
+    func toDict() -> Dictionary<Sequence1.Iterator.Element, Sequence2.Iterator.Element> {
+        return {
+            var dict: [Sequence1.Iterator.Element: Sequence2.Iterator.Element] = [:]
+            for (element1, element2) in self {
+                dict[element1] = element2
+            }
+            return dict
+        }()
+    }
+    
 }
 

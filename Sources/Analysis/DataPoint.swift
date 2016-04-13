@@ -177,7 +177,7 @@ extension DataPoint: CustomStringConvertible {
     public var description: String {
         switch self {
         case .nullValue:
-            return "nil"
+            return "null"
         case .boolValue(let bool):
             return bool.description
         case .numericValue(let double):
